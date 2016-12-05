@@ -1,14 +1,6 @@
 var keys = require("./keys.js");
 var action = process.argv[2];
-var movie = process.argv[3];
-
-var Twitter = require("twitter");
-var client = new Twitter({
-    consumer_key: keys.twitterKeys.consumer_key,
-    consumer_secret: keys.twitterKeys.consumer_secret,
-    access_token_key: keys.twitterKeys.access_token_key,
-    access_token_secret: keys.twitterKeys.access_token_secret,
-});
+var searchKey = process.argv[3];
 
 switch(action) {
 	case "my-tweets":
@@ -16,11 +8,11 @@ switch(action) {
 	break;
 
 	case "spotify-this-song":
-	spotifyThisSong();
+	spotifyThisSong(searchKey);
 	break;
 
 	case "movie-this":
-	movieThis(movie);
+	movieThis(searchKey);
 	break;
 
 	case "do-what-it-says":
@@ -29,7 +21,15 @@ switch(action) {
 }
 
 function myTweets(){
-	//* This will show your last 20 tweets and when they were created at in your terminal/bash window.
+    var Twitter = require("twitter");
+    
+    var client = new Twitter({
+        consumer_key: keys.twitterKeys.consumer_key,
+        consumer_secret: keys.twitterKeys.consumer_secret,
+        access_token_key: keys.twitterKeys.access_token_key,
+        access_token_secret: keys.twitterKeys.access_token_secret,
+    });
+
 	var params = {screen_name: "itsevalieu", count: 20};
     client.get("statuses/user_timeline", params, function(error, tweet, response) {
         if (!error) {
@@ -41,38 +41,26 @@ function myTweets(){
     });
 }
 
-function spotifyThisSong(){
+function spotifyThisSong(query){
+    var spotify = require('spotify'); 
+    var song = query;
 
-/* 
-*This will show the following information about the song in your terminal/bash window
-    * Artist(s)
-    * The song's name
-    * A preview link of the song from Spotify
-    * The album that the song is from
-
-* if no song is provided then your program will default to
-    * "The Sign" by Ace of Base
-
-var spotify = require('spotify'); 
-
-var song = "dancing in the moonlight";
-spotify.search({ type: 'track', query: song }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;
+    if(song === undefined){
+        song = "the+sign";
     }
-    // Do something with 'data' 
-    console.log(data);
-});
-spotify.search({ type: 'artist', query: song }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;
-    }
-    // Do something with 'data' 
-    console.log(data);
-});
-*/
+
+    spotify.search({ type: 'track', query: song }, function(err, data) {
+        if ( err ) {
+            console.log('Error occurred: ' + err);
+            return;
+        }
+
+        console.log("====================================================");
+        console.log("Song Name: " + data.tracks.items[5].name);
+        console.log("Artist(s): " + data.tracks.items[5].artists[0].name);
+        console.log("Album: " + data.tracks.items[5].album.name);
+        console.log("Spotify Preview Link: " + data.tracks.items[5].preview_url +"\n");
+    });
 }
 
 
