@@ -22,7 +22,7 @@ switch(action) {
 
 function myTweets(){
     var Twitter = require("twitter");
-    
+
     var client = new Twitter({
         consumer_key: keys.twitterKeys.consumer_key,
         consumer_secret: keys.twitterKeys.consumer_secret,
@@ -95,12 +95,9 @@ function doWhatItSays(){
             return console.log("Error! Something went wrong!");
         }
         console.log(data);
-        spotifyThisSong();//send in parameter for song
+        data = data.split(",")
+        action = data[0];
+        searchKey = data[1];
+        spotifyThisSong(searchKey);//send in parameter for song
     });
-/*
-Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
-It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-Feel free to change the text in that document to test out the feature for other commands.
-
-*/
 }
